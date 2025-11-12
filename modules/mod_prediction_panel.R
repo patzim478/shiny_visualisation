@@ -72,7 +72,7 @@ mod_prediction_panel_ui <- function(id) {
           column(6, uiOutput(ns("model_ui")))
         ),
         fluidRow(
-          column(6, sliderInput(ns("year_of_manufacture"), label = labelWithTooltip("Year:", "Year manufactured."), min = 1940, max = 2025, value = 2018, step = 1, sep = "", width = "100%")),
+          column(6, sliderInput(ns("year_of_manufacture"), label = labelWithTooltip("Year:", "Year manufactured."), min = 1900, max = 2025, value = 2018, step = 1, sep = "", width = "100%")),
           column(6, sliderInput(ns("mileage"), label = labelWithTooltip("Mileage (km):", "Total distance traveled."), min = 0, max = 800000, value = 80000, step = 500, width = "100%"))
         ),
         fluidRow(
