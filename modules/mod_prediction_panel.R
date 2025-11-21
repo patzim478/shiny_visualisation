@@ -1,4 +1,3 @@
-# Helper function for UI tooltips (no changes)
 labelWithTooltip <- function(labelText, tooltipText) {
   tags$label(
     labelText,
@@ -10,9 +9,12 @@ labelWithTooltip <- function(labelText, tooltipText) {
   )
 }
 
+<<<<<<< Updated upstream
 
 # --- mod_prediction_panel_ui Function (Corrected for Uniform Width) ---
 
+=======
+>>>>>>> Stashed changes
 mod_prediction_panel_ui <- function(id) {
   ns <- NS(id)
   
@@ -21,7 +23,16 @@ mod_prediction_panel_ui <- function(id) {
     ui_config <- fromJSON(config_path)
     color_css_map <- ui_config$color_map
   } else {
-    ui_config <- list(manufacturer_models = list("ERROR" = c("ui_config.json not found")), body_type = "SUV", transmission = "Automatic", drivetrain = "AWD", exterior_colour = "black", interior_colour = "black", fuel_type = "gasoline", engine_type = "Inline")
+    ui_config <- list(
+      manufacturer_models = list("ERROR" = c("ui_config.json not found")), 
+      body_type = "SUV", 
+      transmission = "Automatic", 
+      drivetrain = "AWD", 
+      exterior_colour = "black", 
+      interior_colour = "black", 
+      fuel_type = "gasoline", 
+      engine_type = "Inline"
+    )
     color_css_map <- list("black" = "#000000")
   }
   
@@ -30,42 +41,45 @@ mod_prediction_panel_ui <- function(id) {
       code <- color_css_map[[name]]
       if (is.null(code)) "#777777" else code
     }, USE.NAMES = FALSE)
+    
     mapply(function(name, code) {
       list(value = name, label = name, color_code = code)
     }, color_names, codes, SIMPLIFY = FALSE, USE.NAMES = FALSE)
   }
   
-  exterior_color_data <- prepare_color_data(ui_config$exterior_colour)
-  interior_color_data <- prepare_color_data(ui_config$interior_colour)
+  ext_colors <- if(is.null(ui_config$exterior_colour)) "black" else ui_config$exterior_colour
+  int_colors <- if(is.null(ui_config$interior_colour)) "black" else ui_config$interior_colour
   
-  render_js <- I(
-    "{
-      item: function(item, escape) { return '<div><span class=\"color-swatch\" style=\"background-color: ' + item.color_code + ';\"></span>' + escape(item.label) + '</div>'; },
-      option: function(item, escape) { return '<div><span class=\"color-swatch\" style=\"background-color: ' + item.color_code + ';\"></span>' + escape(item.label) + '</div>'; }
-    }"
-  )
+  exterior_color_data <- prepare_color_data(ext_colors)
+  interior_color_data <- prepare_color_data(int_colors)
+  
+  render_js <- I("{ item: function(item, escape) { return '<div><span class=\"color-swatch\" style=\"background-color: ' + item.color_code + ';\"></span>' + escape(item.label) + '</div>'; }, option: function(item, escape) { return '<div><span class=\"color-swatch\" style=\"background-color: ' + item.color_code + ';\"></span>' + escape(item.label) + '</div>'; } }")
   
   tagList(
     shinyjs::useShinyjs(),
     tags$head(
-      tags$style(HTML(paste0("
-        #", ns("main_container"), " { display: flex; flex-direction: row; height: calc(100vh - 80px); padding: 20px; gap: 20px; }
-        #", ns("sidebar"), " { width: 50%; flex: 0 0 50%; background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 25px; overflow-y: auto; }
-        #", ns("main_panel"), " { width: 50%; flex: 1 1 50%; background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 25px; overflow-y: auto; }
-        #", ns("sidebar"), " .form-group { margin-bottom: 20px; }
-        .color-swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid #ccc; }
-        .tooltip-container { position: relative; display: inline-block; }
-        .tooltip-text { visibility: hidden; width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 5px 10px; position: absolute; z-index: 10; bottom: 110%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; }
-        .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
-      ")))
+      tags$style(HTML(paste0(
+        "#", ns("main_container"), " { display: flex; flex-direction: row; height: calc(100vh - 80px); padding: 20px; gap: 20px; } ",
+        "#", ns("sidebar"), " { width: 50%; flex: 0 0 50%; background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 25px; overflow-y: auto; } ",
+        "#", ns("main_panel"), " { width: 50%; flex: 1 1 50%; background-color: rgba(255, 255, 255, 0.9); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 25px; overflow-y: auto; } ",
+        ".color-swatch { display: inline-block; width: 15px; height: 15px; border-radius: 3px; margin-right: 8px; vertical-align: middle; border: 1px solid #ccc; } ",
+        ".tooltip-container { position: relative; display: inline-block; } ",
+        ".tooltip-text { visibility: hidden; width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 5px 10px; position: absolute; z-index: 10; bottom: 110%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; } ",
+        ".tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }",
+        ".irs-grid-text {
+          display: none; 
+        }",
+        ".irs-grid-text:nth-of-type(3n+1) {
+          display: block !important; /* Slider-Stuff */
+        }"
+      )))
     ),
-    
     div(
       id = ns("main_container"),
-      
       div(
         id = ns("sidebar"),
         h3("Input Car Specifications"),
+<<<<<<< Updated upstream
         
         fluidRow(
           column(6, selectInput(ns("manufacturer"), label = labelWithTooltip("Manufacturer:", "Select car manufacturer."), choices = names(ui_config$manufacturer_models), width = "100%")),
@@ -101,15 +115,78 @@ mod_prediction_panel_ui <- function(id) {
         ),
         fluidRow(
           column(6, selectInput(ns("engine_type"), label = labelWithTooltip("Engine Type:", "Select engine configuration."), choices = ui_config$engine_type, width = "100%"))
+=======
+        accordion(
+          id = ns("collapse_inputs"),
+          open = "General Information",
+          multiple = TRUE,
+          accordion_panel(
+            title = "General Information",
+            icon = icon("info-circle"),
+            fluidRow(
+              column(6, selectInput(ns("manufacturer"), label = labelWithTooltip("Manufacturer:", "Select car manufacturer."), choices = names(ui_config$manufacturer_models), width = "100%")),
+              column(6, uiOutput(ns("model_ui")))
+            ),
+            fluidRow(
+              column(6, sliderInput(ns("year_of_manufacture"), label = labelWithTooltip("Year:", "Year manufactured."), min = 1940, max = 2025, value = 2018, step = 1, sep = "", width = "100%")),
+              column(6, selectInput(ns("body_type"), label = labelWithTooltip("Body Type:", "Select body style."), choices = ui_config$body_type, width = "100%"))
+            )
+          ),
+          accordion_panel(
+            title = "Drive and Engine",
+            icon = icon("cogs"),
+            fluidRow(
+              column(6, selectInput(ns("engine_type"), label = labelWithTooltip("Engine Type:", "Select engine config."), choices = ui_config$engine_type, width = "100%")),
+              column(6, sliderInput(ns("engine_displacement_L"), label = labelWithTooltip("Displacement (L):", "Engine displacement."), min = 0.6, max = 8.0, value = 2.0, step = 0.1, width = "100%"))
+            ),
+            fluidRow(
+              column(6, sliderInput(ns("engine_cylinders"), label = labelWithTooltip("Cylinders:", "Number of cylinders."), min = 0, max = 16, value = 4, step = 1, width = "100%")),
+              column(6, selectInput(ns("drivetrain"), label = labelWithTooltip("Drivetrain:", "Select drivetrain."), choices = ui_config$drivetrain, width = "100%"))
+            ),
+            fluidRow(
+              column(6, selectInput(ns("transmission"), label = labelWithTooltip("Transmission:", "Select transmission."), choices = ui_config$transmission, width = "100%")),
+              column(6, selectInput(ns("fuel_type"), label = labelWithTooltip("Fuel Type:", "Select fuel type."), choices = ui_config$fuel_type, width = "100%"))
+            )
+          ),
+          accordion_panel(
+            title = "Consumption and Performance",
+            icon = icon("tachometer-alt"),
+            fluidRow(
+              column(6, sliderInput(ns("city_consumption"), label = labelWithTooltip("City L/100km:", "Fuel consumption city."), min = 2, max = 25, value = 11.0, step = 0.1, width = "100%")),
+              column(6, sliderInput(ns("highway_consumption"), label = labelWithTooltip("Highway L/100km:", "Fuel consumption highway."), min = 0, max = 20, value = 8.5, step = 0.1, width = "100%"))
+            ),
+            fluidRow(
+              column(12, sliderInput(ns("mileage"), label = labelWithTooltip("Mileage (km):", "Total distance."), min = 0, max = 800000, value = 80000, step = 500, width = "100%"))
+            )
+          ),
+          accordion_panel(
+            title = "Equipment and Design",
+            icon = icon("paint-brush"),
+            fluidRow(
+              column(6, selectizeInput(ns("exterior_colour"), label = labelWithTooltip("Exterior Colour:", "Select exterior colour."), choices = ui_config$exterior_colour, width = "100%", options = list(options = exterior_color_data, valueField = "value", labelField = "label", searchField = "label", render = render_js))),
+              column(6, selectizeInput(ns("interior_colour"), label = labelWithTooltip("Interior Colour:", "Select interior colour."), choices = ui_config$interior_colour, width = "100%", options = list(options = interior_color_data, valueField = "value", labelField = "label", searchField = "label", render = render_js)))
+            ),
+            fluidRow(
+              column(6, sliderInput(ns("passengers"), label = labelWithTooltip("Passengers:", "Number of seats."), min = 2, max = 14, value = 5, step = 1, width = "100%")),
+              column(6, sliderInput(ns("doors"), label = labelWithTooltip("Doors:", "Number of doors."), min = 2, max = 5, value = 4, step = 1, width = "100%")),
+              column(6, h4("Physical Condition"), fileInput(ns("car_images"), label = labelWithTooltip(HTML("Upload Images <strong style='color:red;'>*</strong>"), "Upload photos."), multiple = TRUE, accept = c("image/jpeg", "image/png", "image/jpg")))
+            )
+          )
+>>>>>>> Stashed changes
         ),
-        
         tags$br(),
         actionButton(ns("submitbutton"), "Predict Price", class = "btn btn-primary btn-lg btn-block")
       ),
+<<<<<<< Updated upstream
       
       div(
         id = ns("main_panel"),
         h3('Prediction Output'),
+=======
+      div(
+        id = ns("main_panel"),
+        h3("Prediction Output"),
+>>>>>>> Stashed changes
         div(style = "flex: 0 0 auto; padding: 10px; border-radius: 8px; background-color: rgba(245, 245, 245, 0.9);", uiOutput(ns("contents"))),
         hr(),
         div(style = "flex: 1 1 auto; position: relative;", h4("Model Feature Importance", style = "text-align: center;"), plotlyOutput(ns("importance_plot"), height = "95%"))
@@ -118,11 +195,10 @@ mod_prediction_panel_ui <- function(id) {
   )
 }
 
-
-# --- Server Function ---
 mod_prediction_panel_server <- function(id, shared_data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+<<<<<<< Updated upstream
 
     config_data <- reactiveVal(NULL)
     observe({
@@ -149,6 +225,34 @@ mod_prediction_panel_server <- function(id, shared_data) {
     output$model_ui <- renderUI({
       req(input$manufacturer, config_data())
       models <- config_data()$manufacturer_models[[input$manufacturer]]
+=======
+    
+    shinyjs::disable("submitbutton")
+    
+    observeEvent(input$car_images, {
+      if (!is.null(input$car_images) && nrow(input$car_images) > 0) {
+        shinyjs::enable("submitbutton")
+      } else {
+        shinyjs::disable("submitbutton")
+      }
+    }, ignoreNULL = FALSE)
+    
+    config_data <- reactiveVal(NULL)
+    
+    observe({
+      config_path <- "ui_config.json"
+      if (file.exists(config_path)) {
+        config_data(fromJSON(config_path))
+      } else {
+        config_data(list(manufacturer_models = list("ERROR" = c("ui_config.json not found"))))
+      }
+    })
+    
+    output$model_ui <- renderUI({
+      req(input$manufacturer, config_data())
+      models <- config_data()$manufacturer_models[[input$manufacturer]]
+      if (is.null(models)) return(NULL)
+>>>>>>> Stashed changes
       selectInput(ns("model"), label = labelWithTooltip("Model:", "Select the car model."), choices = models, width = "100%")
     })
     
@@ -156,9 +260,13 @@ mod_prediction_panel_server <- function(id, shared_data) {
     importance_plot_obj <- reactiveVal(NULL)
     
     observeEvent(input$submitbutton, {
+<<<<<<< Updated upstream
       req(input$model, cancelOutput = TRUE)
+=======
+      req(input$model, input$car_images, cancelOutput = TRUE)
+>>>>>>> Stashed changes
       
-      withProgress(message = 'Processing Request', style = "old", value = 0, {
+      withProgress(message = "Processing Request", style = "old", value = 0, {
         
         model_paths <- list(
           lower = "models/xgb_lower.xgb", 
@@ -170,8 +278,12 @@ mod_prediction_panel_server <- function(id, shared_data) {
         # --- MODEL LOADING CHECK ---
         if (is.null(trained_model_bundle())) {
           if (!all(sapply(model_paths, file.exists))) {
+<<<<<<< Updated upstream
             # Since training is external, we throw a clear error if files are missing
             stop("FATAL ERROR: Trained model files not found in the 'models/' directory. Please run the run_training.R script first.")
+=======
+            stop("FATAL ERROR: Model files not found.")
+>>>>>>> Stashed changes
           }
           
           setProgress(value = 0.1, detail = "Loading trained models...")
@@ -187,9 +299,30 @@ mod_prediction_panel_server <- function(id, shared_data) {
         setProgress(value = 0.9, detail = "Preparing new data for prediction...")
         
         current_bundle <- trained_model_bundle()
+<<<<<<< Updated upstream
         preproc_info <- current_bundle$preproc_info
         
         # --- PREDICTION DATA PREPARATION (UNCHANGED) ---
+=======
+        setProgress(value = 0.3, detail = "Analyzing car images...")
+        
+        state_description_map <- c(`1` = "Very Good", `2` = "Minor Damage", `3` = "Moderate Damage", `4` = "Severe Damage")
+        
+        image_paths <- input$car_images$datapath
+        predicted_classes_numeric <- sapply(image_paths, function(path) {
+          img <- image_load(path, target_size = c(224, 224))
+          img_array <- image_to_array(img)
+          img_array <- array_reshape(img_array, c(1, 224, 224, 3))
+          preds <- current_bundle$image_model %>% predict(img_array)
+          which.max(preds) 
+        })
+        
+        avg_state <- mean(predicted_classes_numeric)
+        final_car_state <- floor(avg_state + 0.5)
+        
+        setProgress(value = 0.5, detail = "Preparing final data...")
+        
+>>>>>>> Stashed changes
         newdata <- data.frame(
           year_of_manufacture = as.integer(input$year_of_manufacture),
           manufacturer = input$manufacturer,
@@ -218,6 +351,7 @@ mod_prediction_panel_server <- function(id, shared_data) {
           }
         }
         
+<<<<<<< Updated upstream
         # Create sparse matrix for prediction
         pred_matrix_small <- sparse.model.matrix(price ~ . -1, data = newdata)
         
@@ -244,52 +378,43 @@ mod_prediction_panel_server <- function(id, shared_data) {
           # Plot top 15 features
           p <- plot_ly(data = imp_data %>% head(15) %>% arrange(Gain), x = ~Gain, y = ~factor(Feature, levels = Feature), type = 'bar', orientation = 'h') %>%
             layout(title = "", yaxis = list(title = ""), xaxis = list(title = "Feature Importance (Gain)"), paper_bgcolor = 'rgba(0,0,0,0)', plot_bgcolor = 'rgba(0,0,0,0)')
+=======
+        setProgress(value = 0.9, detail = "Generating price prediction...")
+        predictions <- list(
+          lower = predict(current_bundle$models$lower, data = newdata, type = "quantiles", quantiles = 0.05)$predictions[,1],
+          median = predict(current_bundle$models$median, data = newdata, type = "quantiles", quantiles = 0.50)$predictions[,1],
+          upper = predict(current_bundle$models$upper, data = newdata, type = "quantiles", quantiles = 0.95)$predictions[,1]
+        )
+        
+        imp_raw <- ranger::importance(current_bundle$models$median)
+        if (length(imp_raw) > 0) {
+          imp_df <- data.frame(Feature = names(imp_raw), Importance = imp_raw, row.names = NULL) %>% arrange(Importance)
+          p <- plot_ly(data = imp_df, x = ~Importance, y = ~factor(Feature, levels = Feature), type = "bar", orientation = "h") %>%
+            layout(title = "", yaxis = list(title = ""), xaxis = list(title = "Feature Importance"), paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)")
+>>>>>>> Stashed changes
           importance_plot_obj(p)
         } else {
           importance_plot_obj(NULL)
         }
         
-        # Detailed prediction output table
         output$contents <- renderUI({
-          
           pred_median <- round(predictions$median)
           pred_lower <- round(predictions$lower)
           pred_upper <- round(predictions$upper)
           
-          format_euro <- function(amount) {
-            paste0(format(amount, nsmall = 0, big.mark = ","), " €")
-          }
+          format_euro <- function(amount) { paste0(format(amount, nsmall = 0, big.mark = ","), " EUR") }
           
           tags$div(
-            tags$style(HTML("
-              .pred-table { width: 100%; border-collapse: collapse; }
-              .pred-table td { padding: 8px; border: 1px solid #ddd; text-align: right; }
-              .pred-table td:first-child { text-align: left; font-weight: bold; }
-            ")),
+            tags$style(HTML(".pred-table { width: 100%; border-collapse: collapse; } .pred-table td { padding: 8px; border: 1px solid #ddd; text-align: right; } .pred-table td:first-child { text-align: left; font-weight: bold; }")),
             tags$table(class = "pred-table",
-                       tags$tr(
-                         tags$td("Predicted Price (Median)"),
-                         tags$td(format_euro(pred_median))
-                       ),
-                       tags$tr(
-                         tags$td("90% Confidence Lower Bound"),
-                         tags$td(format_euro(pred_lower))
-                       ),
-                       tags$tr(
-                         tags$td("90% Confidence Upper Bound"),
-                         tags$td(format_euro(pred_upper))
-                       ),
-                       tags$tr(
-                         tags$td("Uncertainty Range"),
-                         tags$td(paste0("± ", format_euro((pred_upper - pred_lower) / 2)))
-                       )
+                       tags$tr(tags$td("Predicted Price (Median)"), tags$td(format_euro(pred_median))),
+                       tags$tr(tags$td("Lower Bound"), tags$td(format_euro(pred_lower))),
+                       tags$tr(tags$td("Upper Bound"), tags$td(format_euro(pred_upper))),
+                       tags$tr(tags$td("Uncertainty"), tags$td(paste0("+/- ", format_euro((pred_upper - pred_lower) / 2))))
             ),
             tags$br(),
-            tags$p(style = "text-align: center;",
-                   "Based on the provided specifications, the model predicts the car's price to be around ",
-                   tags$b(format_euro(pred_median)),
-                   ", with a 90% confidence that the true price falls between ",
-                   tags$b(format_euro(pred_lower)), " and ", tags$b(format_euro(pred_upper)), "."
+            tags$p(style = "text-align: center;", 
+                   "Model prediction: ", tags$b(format_euro(pred_median)), "."
             )
           )
         })
@@ -302,5 +427,3 @@ mod_prediction_panel_server <- function(id, shared_data) {
     })
   })
 }
-
-
